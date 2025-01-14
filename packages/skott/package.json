@@ -1,18 +1,19 @@
 {
-  "name": "skott",
-  "version": "0.35.0",
+  "name": "@nimbuscloud-ai/skott",
+  "version": "0.35.1",
   "description": "Automatically construct and visualize Graphs generated from your JavaScript and TypeScript project",
   "author": "Antoine Coulon",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "@nimbuscloud-ai:registry": "https://npm.pkg.github.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antoine-coulon/skott.git"
+    "url": "git+https://github.com/nimbuscloud-ai/skott.git"
   },
   "bugs": {
-    "url": "https://github.com/antoine-coulon/skott/issues"
+    "url": "https://github.com/nimbuscloud-ai/skott/issues"
   },
   "main": "dist/index.js",
   "bin": {
