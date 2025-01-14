@@ -436,7 +436,7 @@ describe("When running skott using all real dependencies", () => {
           new FakeLogger()
         );
 
-        expect(
+        await expect(
           async () =>
             await runSandbox(async () => {
               await skott

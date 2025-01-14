@@ -16,12 +16,17 @@ const minimatchDefaultOptions: MinimatchOptions = {
 
 /* eslint-disable no-sync */
 export class InMemoryFileReader implements FileReader {
+  private cache: Map<string, { modifiedAt: number; content: string }> =
+    new Map();
+
   constructor(
     private readonly config: FileSystemConfig = {
       cwd: "./",
       ignorePatterns: []
     }
-  ) {}
+  ) {
+    this.cache = new Map();
+  }
 
   private isFileIgnored(filename: string): boolean {
     return this.config.ignorePatterns.some((pattern) =>
@@ -34,8 +39,23 @@ export class InMemoryFileReader implements FileReader {
       return Promise.reject("_discard_");
     }
 
+    if (this.cache.has(filename)) {
+      const { modifiedAt, content } = this.cache.get(filename)!;
+
+      if (memfs.fs.statSync(filename).mtimeMs !== modifiedAt) {
+        this.cache.delete(filename);
+      } else {
+        return Promise.resolve(content);
+      }
+    }
+
     return new Promise((resolve) => {
-      resolve(memfs.fs.readFileSync(filename, "utf-8") as string);
+      const content = memfs.fs.readFileSync(filename, "utf-8") as string;
+      this.cache.set(filename, {
+        modifiedAt: memfs.fs.statSync(filename).mtimeMs,
+        content
+      });
+      resolve(content);
     });
   }
 

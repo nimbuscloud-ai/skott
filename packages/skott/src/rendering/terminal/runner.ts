@@ -62,20 +62,21 @@ export function makeSkottRunner<T>(
         spinner = ora(`Initializing ${kleur.blue().bold("skott")}`).start();
       }
 
-      isFirstRun = false;
-
       const skottResult = await runFromRuntimeConfig<T>(config);
 
       const timeTook = `${(performance.now() - startTime).toFixed(3)}ms`;
 
-      if (spinner && isFirstRun) {
-        spinner.text = `Finished Skott initialization (${kleur
-          .magenta()
-          .bold(timeTook)})`;
-        spinner.color = "green";
+      if (isFirstRun) {
+        console.log(
+          `\nFinished Skott initialization (${kleur.magenta().bold(timeTook)})`
+        );
+        isFirstRun = false;
       }
 
-      spinner?.stop();
+      if (spinner) {
+        spinner.color = "green";
+        spinner.stop();
+      }
 
       return skottResult;
     } catch (error: any) {

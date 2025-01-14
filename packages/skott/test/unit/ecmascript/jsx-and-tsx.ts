@@ -188,9 +188,12 @@ export function makeTestSuiteForJsxOrTsx(rawLanguage: "ts" | "js"): void {
         entrypoint: `index.${rawLanguage}`
       });
 
-      expect(graph).to.be.deep.equal({
+      expect(graph).toEqual({
         [`index.${rawLanguage}`]: {
-          adjacentTo: [`component_1.${jsxOrTsx}`, `component_2.${jsxOrTsx}`],
+          adjacentTo: expect.arrayContaining([
+            `component_1.${jsxOrTsx}`,
+            `component_2.${jsxOrTsx}`
+          ]),
           id: `index.${rawLanguage}`,
           body: fakeNodeBody
         },

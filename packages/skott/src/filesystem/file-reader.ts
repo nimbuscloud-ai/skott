@@ -50,7 +50,12 @@ function toForwardSlashesOnly(filename: string) {
 }
 
 export class FileSystemReader implements FileReader {
-  constructor(private readonly config: FileSystemConfig) {}
+  cache: Map<string, { modifiedAt: number; content: string }> =
+    new Map();
+
+  constructor(private readonly config: FileSystemConfig) {
+    this.cache = new Map();
+  }
 
   private isFileIgnored(filename: string): boolean {
     if (this.config.ignorePatterns.length === 0) {
@@ -76,7 +81,48 @@ export class FileSystemReader implements FileReader {
       );
     }
 
-    return fs.readFile(filename, { encoding: "utf-8", flag: R_OK });
+    if (this.cache.has(filename)) {
+      const { modifiedAt, content } = this.cache.get(filename) as {
+        modifiedAt: number;
+        content: string;
+      };
+
+      try {
+        if (fsSync.statSync(filename).mtimeMs !== modifiedAt) {
+          this.cache.delete(filename);
+        } else {
+          return Promise.resolve(content);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return fs.readFile(filename, {
+      encoding: "utf-8",
+      flag: R_OK
+    }).then((content) => {
+      try {
+        const modifiedAt = fsSync.statSync(filename).mtimeMs;
+        return {
+          modifiedAt,
+          content
+        };
+      } catch (error) {
+        console.error(error);
+        return {
+          modifiedAt: 0,
+          content
+        };
+      }
+    }).then(({ modifiedAt, content }) => {
+      this.cache.set(filename, {
+        modifiedAt,
+        content
+      });
+
+      return content;
+    });
   }
 
   exists(filename: string) {

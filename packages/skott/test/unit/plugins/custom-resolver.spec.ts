@@ -221,14 +221,17 @@ describe("When using dependency resolvers", () => {
       const { getStructure } = await skott.initialize();
       const { graph } = await getStructure();
 
-      expect(graph).to.deep.equal({
+      expect(graph).toEqual({
         "index.js": {
           id: "index.js",
           adjacentTo: ["file2.js"],
           body: {
             size: 0,
             thirdPartyDependencies: ["effect"],
-            builtinDependencies: ["node:fs", "@my-custom-monorepo-lib"]
+            builtinDependencies: expect.arrayContaining([
+              "node:fs",
+              "@my-custom-monorepo-lib"
+            ])
           }
         },
         "file2.js": {

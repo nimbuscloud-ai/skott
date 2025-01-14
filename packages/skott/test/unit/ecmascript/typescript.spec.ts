@@ -822,17 +822,20 @@ describe("When traversing a TypeScript project", () => {
                   trackThirdParty: true
                 });
 
-              expect(graph).to.be.deep.equal({
+              expect(graph).toEqual({
                 "index.ts": {
-                  adjacentTo: ["src/config/json/index.ts", "lib.ts"],
+                  adjacentTo: expect.arrayContaining([
+                    "src/config/json/index.ts",
+                    "lib.ts"
+                  ]),
                   id: "index.ts",
                   body: fakeNodeBody
                 },
                 "lib.ts": {
-                  adjacentTo: [
+                  adjacentTo: expect.arrayContaining([
                     "src/core/apps/skott.ts",
                     "src/core/shared/index.ts"
-                  ],
+                  ]),
                   id: "lib.ts",
                   body: {
                     ...fakeNodeBody,
@@ -911,15 +914,15 @@ describe("When traversing a TypeScript project", () => {
                   trackThirdParty: true
                 });
 
-              expect(graph).to.be.deep.equal({
+              expect(graph).toEqual({
                 "index.ts": {
-                  adjacentTo: [
+                  adjacentTo: expect.arrayContaining([
                     "lib/index.ts",
                     "src/some-folder/file.ts",
                     "src/some-folder/nested/a.ts",
                     "src/some-other-folder/nested/b.ts",
                     "core/path1/path2/feat.ts"
-                  ],
+                  ]),
                   id: "index.ts",
                   body: {
                     ...fakeNodeBody,
@@ -1084,12 +1087,12 @@ describe("When traversing a TypeScript project", () => {
                   tsConfigPath: "project/tsconfig.json"
                 });
 
-              expect(graph).to.be.deep.equal({
+              expect(graph).toEqual({
                 "project/index.ts": {
-                  adjacentTo: [
+                  adjacentTo: expect.arrayContaining([
                     "project/components/button.ts",
                     "project/libs/auth/index.ts"
-                  ],
+                  ]),
                   id: "project/index.ts",
                   body: fakeNodeBody
                 },

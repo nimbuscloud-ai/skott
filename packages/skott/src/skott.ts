@@ -450,16 +450,16 @@ export class Skott<T> {
 
     const resolvedNodePath = this.resolveNodePath(rootPath);
 
-    for (const moduleDeclaration of moduleDeclarations.values()) {
+    const process = async (declaration: string) => {
       for (const resolver of this.config.dependencyResolvers) {
         this.logger.info(
-          `Resolving ${highlight(moduleDeclaration)} ${lowlight(
+          `Resolving ${highlight(declaration)} ${lowlight(
             `using ${resolver.constructor.name}`
           )}`
         );
 
         const result = await resolver.resolve({
-          moduleDeclaration,
+          moduleDeclaration: declaration,
           projectGraph: this.#projectGraph,
           config: this.config,
           rawNodePath: rootPath,
@@ -475,7 +475,9 @@ export class Skott<T> {
           }
         }
       }
-    }
+    };
+
+    await Promise.all(Array.from(moduleDeclarations).map(process));
   }
 
   private findThirdPartyDependenciesFromGraph(): string[] {

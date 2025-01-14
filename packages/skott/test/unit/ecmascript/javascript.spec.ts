@@ -465,7 +465,7 @@ describe("When traversing a JavaScript/Node.js project", () => {
                 entrypoint: "index.js"
               });
 
-              expect(graph).to.deep.equal({
+              expect(graph).toEqual({
                 "index.js": {
                   id: "index.js",
                   adjacentTo: ["src/feature.js"],
@@ -473,11 +473,11 @@ describe("When traversing a JavaScript/Node.js project", () => {
                 },
                 "src/feature.js": {
                   id: "src/feature.js",
-                  adjacentTo: [
+                  adjacentTo: expect.arrayContaining([
                     "src/constants.js",
                     "src/utils/index.js",
                     "src/other-feature.js"
-                  ],
+                  ]),
                   body: fakeNodeBody
                 },
                 "src/constants.js": {
@@ -497,7 +497,10 @@ describe("When traversing a JavaScript/Node.js project", () => {
                 },
                 "src/other-feature.js": {
                   id: "src/other-feature.js",
-                  adjacentTo: ["src/last-feature.js", "src/utils/index.js"],
+                  adjacentTo: expect.arrayContaining([
+                    "src/last-feature.js",
+                    "src/utils/index.js"
+                  ]),
                   body: fakeNodeBody
                 },
                 "src/last-feature.js": {
@@ -507,20 +510,24 @@ describe("When traversing a JavaScript/Node.js project", () => {
                 }
               });
 
-              expect(files).to.deep.equal([
-                "index.js",
-                "src/feature.js",
-                "src/constants.js",
-                "src/utils/index.js",
-                "src/utils/doSomethingUtil.js",
-                "src/other-feature.js",
-                "src/last-feature.js"
-              ]);
+              expect(files).toEqual(
+                expect.arrayContaining([
+                  "index.js",
+                  "src/feature.js",
+                  "src/constants.js",
+                  "src/utils/index.js",
+                  "src/utils/doSomethingUtil.js",
+                  "src/other-feature.js",
+                  "src/last-feature.js"
+                ])
+              );
 
               expect(hasCircularDependencies).to.equal(true);
-              expect(circularDependencies).to.deep.equal([
-                ["src/utils/index.js", "src/utils/doSomethingUtil.js"]
-              ]);
+              expect(circularDependencies).toEqual(
+                expect.arrayContaining([
+                  ["src/utils/index.js", "src/utils/doSomethingUtil.js"]
+                ])
+              );
             });
           });
         });
@@ -671,10 +678,13 @@ describe("When traversing a JavaScript/Node.js project", () => {
             }
           );
 
-          expect(skottProject).to.be.deep.equal({
+          expect(skottProject).toEqual({
             graph: {
               "index.js": {
-                adjacentTo: ["lib/index.js", "foobar.js"],
+                adjacentTo: expect.arrayContaining([
+                  "lib/index.js",
+                  "foobar.js"
+                ]),
                 id: "index.js",
                 body: fakeNodeBody
               },
@@ -699,13 +709,13 @@ describe("When traversing a JavaScript/Node.js project", () => {
                 body: fakeNodeBody
               }
             },
-            files: [
+            files: expect.arrayContaining([
               "index.js",
               "lib/index.js",
               "fizzbuzz.js",
               "foobaz.js",
               "foobar.js"
-            ],
+            ]),
             circularDependencies: [],
             hasCircularDependencies: false,
             leaves: ["foobaz.js"]

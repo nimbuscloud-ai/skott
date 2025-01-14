@@ -127,7 +127,7 @@ describe("Skott analysis runner", () => {
       new FakeLogger()
     );
 
-    expect(skott.initialize()).rejects.toThrowError(
+    await expect(skott.initialize()).rejects.toThrowError(
       `Entrypoint "not-existing.ts" not found`
     );
   });
